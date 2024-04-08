@@ -36,6 +36,7 @@ thread_betalist.join()
 
 
 combined_df = pd.concat([beta_names, df_producthunt], ignore_index=True)
+combined_df = combined_df.drop_duplicates(subset=['names'])
 combined_df = combined_df[~combined_df['Name'].isin(g2_names)]
 print(combined_df)
 # Save the filtered DataFrame to a CSV file
