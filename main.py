@@ -15,6 +15,7 @@ def fetch_g2():
     g2_data = get_G2_products()
     g2_names = {product['name'] for product in g2_data}
 
+# Function to fetch Beta List products
 def fetch_betalist():
     global beta_names
     beta_names=pd.DataFrame(products_released())
