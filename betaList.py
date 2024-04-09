@@ -67,7 +67,7 @@ def scrape_betalist_topics():
     # Create a DataFrame from the list of dictionaries
     df = pd.DataFrame(data)
     date_str = datetime.now().strftime('%Y-%m-%d')
-    filename = f'Complete1/CSV/BetaList/BetaListProducts_{date_str}.csv'
+    filename = f'CSV/BetaList/BetaListProducts_{date_str}.csv'
     df.to_csv(filename, index=False)
     return df
 
@@ -89,7 +89,7 @@ def get_previous_week_filename():
 
 def load_csv_to_dataframe():
     # Get the file name for the previous week
-    filename = 'Complete1/CSV/BetaList/'+get_previous_week_filename()
+    filename = 'CSV/BetaList/'+get_previous_week_filename()
 
     try:
         # Read the CSV file into a DataFrame
