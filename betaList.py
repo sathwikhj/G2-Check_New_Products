@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import pandas as pd
 from datetime import datetime, timedelta
+import os
+import re
 
 def scrape_betalist_topics():
     base_url = 'https://betalist.com'
@@ -119,3 +121,18 @@ def products_released():
 
     # Return the new products as a list
     return df_new
+
+def for_display_betalist():
+    directory = 'CSV/BetaList'
+    files = os.listdir(directory)
+    prefix='BetaListProducts_'
+    csv_files = [file for file in files if file.endswith('.csv') and file.startswith(prefix)]
+    dates = [re.search(r'(\d{4}-\d{2}-\d{2})', file).group(1) for file in csv_files]
+    sorted_dates = sorted(dates, reverse=True)
+    latest_files = [file for file in csv_files if re.search(sorted_dates[0], file)]
+    second_latest_files = [file for file in csv_files if re.search(sorted_dates[1], file)]
+    latest_df = pd.read_csv(os.path.join(directory, latest_files[0]))
+    second_latest_df = pd.read_csv(os.path.join(directory, second_latest_files[0]))
+    new_products = latest_df[~latest_df['Name'].isin(second_latest_df['Name'])]
+    return new_products
+    
