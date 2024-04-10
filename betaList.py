@@ -5,6 +5,10 @@ import pandas as pd
 from datetime import datetime, timedelta
 import os
 import re
+import logging
+
+# Configure logging
+logging.basicConfig(filename='Logs/Betalist_log.txt', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def scrape_betalist_topics():
     base_url = 'https://betalist.com'
@@ -73,26 +77,9 @@ def scrape_betalist_topics():
     df.to_csv(filename, index=False)
     return df
 
-
-def get_previous_week_filename():
-    # Get today's date
-    today = datetime.now()
-
-    # Calculate the date a week ago
-    week_ago = today - timedelta(days=7)
-
-    # Format the dates as strings in the required format
-    today_str = today.strftime('%Y-%m-%d')
-    week_ago_str = week_ago.strftime('%Y-%m-%d')
-
-    # Generate the file name
-    filename = f'BetaListProducts_{week_ago_str}.csv'
-    return filename
-
 def load_csv_to_dataframe():
     # Get the file name for the previous week
-    filename = 'CSV/BetaList/'+get_previous_week_filename()
-
+    filename = get_latest_csv_from_betalist()
     try:
         # Read the CSV file into a DataFrame
         df = pd.read_csv(filename)
@@ -136,3 +123,11 @@ def for_display_betalist():
     new_products = latest_df[~latest_df['Name'].isin(second_latest_df['Name'])]
     return new_products
     
+def get_latest_csv_from_betalist():
+    directory='CSV/BetaList'
+    files = [file for file in os.listdir(directory) if file.endswith('.csv')]
+    if not files:
+        print("No CSV files found in the directory:", directory)
+        return None
+    latest_file = max(files, key=os.path.getmtime)
+    return os.path.join(directory, latest_file)
