@@ -1,14 +1,11 @@
-import streamlit as st
 import pandas as pd
-from getG2 import get_G2_products, get_G2_products_display
+from getG2 import get_G2_products
 from fetchFromProductHunt import fetch_producthunt_products
-from betaList import products_released, for_display_betalist
+from betaList import products_released
 from datetime import datetime
 from datetime import datetime, timedelta
-import time
 import os
 import logging
-
 # Configure logging
 logging.basicConfig(filename='Logs/main_log.txt', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -39,26 +36,24 @@ def fetch_betalist():
     try:
         global beta_names
         products = products_released()
-        if products:
-            beta_names = pd.DataFrame(products)
-        else:
-            beta_names = pd.DataFrame()
+        beta_names = pd.DataFrame(products)
     except Exception as e:
         logging.error("Error fetching data from BetaList: %s", str(e))
 
-def on_countdown_end():
+def force_fetch():
     try:
         fetch_betalist()
         fetch_producthunt()
         fetch_g2()
         new_combined_df = pd.concat([beta_names, df_producthunt], ignore_index=True)
-        new_combined_df = new_combined_df.drop_duplicates(subset=['names'])
-        new_combined_df = new_combined_df[~new_combined_df['Name'].isin(g2_names)]  
+        new_combined_df = new_combined_df.drop_duplicates(subset=['name'])
+        new_combined_df = new_combined_df[~new_combined_df['name'].isin(g2_names)]  
         date_str = datetime.now().strftime('%Y-%m-%d')
         filename = f'CSV/NewProducts/NewProducts_{date_str}.csv'
         new_combined_df.to_csv(filename, index=False)
     except Exception as e:
         logging.error("Error processing data at the end of countdown: %s", str(e))
+        print(str(e))
 
 def get_next_saturday():
     today = datetime.today()
@@ -98,52 +93,3 @@ def get_latest_csv_from_NewProducts():
     except Exception as e:
         logging.error("An error occurred while getting the latest CSV file: %s", str(e))
         return None
-
-
-def main():
-    try:
-        st.title('New Products Tracker G2')
-        if st.button('Fetch Data From Product Hunt'):
-            st.write('Fetching data...')
-            df_producthunt = fetch_producthunt()
-            st.write('Data fetched successfully!')
-            st.write(df_producthunt)
-        
-        if st.button('Fetch Data From BetaList'):
-            st.write('Fetching data...')
-            beta_names = for_display_betalist()
-            st.write('Data fetched successfully!')
-            st.write(beta_names)
-        
-        if st.button('Fetch Data From G2'):
-            st.write('Fetching data...')
-            g2_names = get_G2_products_display()
-            st.write('Data fetched successfully!')
-            st.write(g2_names)
-
-        if st.button('Compare Data and make a csv file'):
-            df_newprods=pd.read_csv(get_latest_csv_from_NewProducts())
-            st.write(df_newprods)
-        
-        st.subheader("Countdown Timer Until Next Product Update")
-
-        countdown_placeholder = st.empty()
-        
-        while True:
-            time_until_saturday = get_time_until_next_saturday()
-            if time_until_saturday.days < 0:
-                st.error("Error: Could not calculate time until next Saturday.")
-                break
-            else:
-                countdown_placeholder.write(f"Time Left: {format_time_delta(time_until_saturday)}")
-                
-            if datetime.now().weekday() == 5:  # Saturday
-                on_countdown_end()
-                break
-                
-            time.sleep(1)  
-    except Exception as e:
-        logging.error("An error occurred in the main function: %s", str(e))
-
-if __name__ == '__main__':
-    main()

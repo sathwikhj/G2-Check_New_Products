@@ -1,1 +1,2 @@
-2024-04-10 22:24:43,829 - ERROR - An error occurred while getting the latest CSV file: [Errno 2] No such file or directory: 'BetaListProducts_2024-04-09.csv'
+2024-04-11 20:09:11,961 - ERROR - An error occurred while displaying Betalist data: 'name'
+2024-04-11 20:09:49,240 - ERROR - An error occurred while displaying Betalist data: 'name'
