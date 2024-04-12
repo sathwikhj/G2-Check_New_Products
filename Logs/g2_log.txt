@@ -1,0 +1,4 @@
+2024-04-11 20:02:48,688 - ERROR - An error occurred while getting released products: 'name'
+2024-04-11 20:02:51,942 - ERROR - Error processing data at the end of countdown: Index(['name'], dtype='object')
+2024-04-11 20:42:16,543 - ERROR - An error occurred while displaying Betalist data: list index out of range
+2024-04-11 20:46:51,077 - ERROR - Error occurred during forced run: local variable 'force_run_clicked' referenced before assignment
