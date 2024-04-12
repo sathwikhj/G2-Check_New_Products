@@ -54,4 +54,5 @@ The CSV directory stores CSV files containing fetched data, including new produc
 
 
 To run the project : 
+```bash
 streamlit run Streamlit_main.py
